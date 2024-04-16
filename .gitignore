@@ -1,0 +1,5 @@
+config/lucee/lucee-server.xml
+config/lucee/lucee-web.xml.cfm
+logs/
+sqlbackups/
+placeholder.txt

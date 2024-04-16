@@ -1,8 +1,8 @@
 name: lucee-dev
 
 services:
-  lcserver:
-    container_name: lcserver
+  lucee:
+    container_name: luceeserver
     image: lucee/lucee:latest
     deploy:
       resources:
@@ -14,9 +14,8 @@ services:
           memory: 64M
     ports:
       - 8588:8888      
-      - 8580:80
-    # volume mappings need to reflect current setup location,
-    # Also, you need to find a way to make this a generic path, not absolute.
+      
+    # volume mappings need to reflect current setup location    
     volumes:     
       - ../app:/var/www
       - ./secret.txt:/opt/lucee/server/lucee-server/context/password.txt
@@ -29,14 +28,14 @@ services:
       - TZ=America/Chicago
    
     depends_on:
-      - msdb
-      - redis
+      - mssqldb
+      
     restart: unless-stopped
     networks:
-      - ldev_net
+      - luceedev_net
       
-  msdb:  
-    container_name: lcsqlserver
+  mssqldb:  
+    container_name: luceedevsql
     image: mcr.microsoft.com/mssql/server:2019-latest
     deploy:
       resources:
@@ -47,7 +46,7 @@ services:
           cpus: '0.25'
           memory: 64M
     ports:
-      - "1433:1433"
+      - "2433:1433"
     environment:
       - TZ=America/Chicago
       - SA_PASSWORD=HappyPirate24
@@ -55,31 +54,17 @@ services:
       - MSSQL_PID=Express
     restart: unless-stopped
     networks:
-      - ldev_net      
+      - luceedev_net      
     # volume mappings need to reflect current setup location,
     # Also, you need to find a way to make this a generic path, not absolute.  
     volumes:
       - mssqldata:/var/opt/mssql
       - ../sqlbackups:/var/opt/backups
-
-  redis:
-    container_name: lcredis
-    image: redis:latest
-    ports:
-      - 6379:6379
-    environment:
-      - TZ=America/Chicago
-      - REDIS_PASSWORD=HappyPirate24       
-    restart: unless-stopped   
-    networks:
-      - ldev_net    
-    volumes:
-      - redisdata:/data
       
 networks:      
-  ldev_net:
+  luceedev_net:
     driver: bridge
     
 volumes:
    mssqldata:
-   redisdata:
+   

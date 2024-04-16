@@ -1,1 +1,1 @@
-<cfouput>Hello World: #now()#</cfoutput>
+<cfoutput>Hello World: #now()#</cfoutput>
