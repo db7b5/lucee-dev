@@ -21,8 +21,8 @@ services:
       - ./secret.txt:/opt/lucee/server/lucee-server/context/password.txt
       - ../logs/lucee:/optlucee/web/logs
       - ../logs/tomcat:/usr/local/tomcat/logs
-      - ../config/lucee/lucee-server.xml:/opt/lucee/server/lucee-server/context/lucee-server.xml
-      - ../config/lucee/lucee-web.xml.cfm:/opt/lucee/web/lucee-web.xml.cfm
+      - ../config/lucee-server.xml:/opt/lucee/server/lucee-server/context/lucee-server.xml
+      - ../config/lucee-web.xml.cfm:/opt/lucee/web/lucee-web.xml.cfm
       
     environment:  
       - TZ=America/Chicago
