@@ -1,0 +1,85 @@
+name: lucee-dev
+
+services:
+  lcserver:
+    container_name: lcserver
+    image: lucee/lucee:latest
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '0.25'
+          memory: 64M
+    ports:
+      - 8588:8888      
+      - 8580:80
+    # volume mappings need to reflect current setup location,
+    # Also, you need to find a way to make this a generic path, not absolute.
+    volumes:     
+      - ../app:/var/www
+      - ./secret.txt:/opt/lucee/server/lucee-server/context/password.txt
+      - ../logs/lucee:/optlucee/web/logs
+      - ../logs/tomcat:/usr/local/tomcat/logs
+      - ../config/lucee/lucee-server.xml:/opt/lucee/server/lucee-server/context/lucee-server.xml
+      - ../config/lucee/lucee-web.xml.cfm:/opt/lucee/web/lucee-web.xml.cfm
+      
+    environment:  
+      - TZ=America/Chicago
+   
+    depends_on:
+      - msdb
+      - redis
+    restart: unless-stopped
+    networks:
+      - ldev_net
+      
+  msdb:  
+    container_name: lcsqlserver
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '0.25'
+          memory: 64M
+    ports:
+      - "1433:1433"
+    environment:
+      - TZ=America/Chicago
+      - SA_PASSWORD=HappyPirate24
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Express
+    restart: unless-stopped
+    networks:
+      - ldev_net      
+    # volume mappings need to reflect current setup location,
+    # Also, you need to find a way to make this a generic path, not absolute.  
+    volumes:
+      - mssqldata:/var/opt/mssql
+      - ../sqlbackups:/var/opt/backups
+
+  redis:
+    container_name: lcredis
+    image: redis:latest
+    ports:
+      - 6379:6379
+    environment:
+      - TZ=America/Chicago
+      - REDIS_PASSWORD=HappyPirate24       
+    restart: unless-stopped   
+    networks:
+      - ldev_net    
+    volumes:
+      - redisdata:/data
+      
+networks:      
+  ldev_net:
+    driver: bridge
+    
+volumes:
+   mssqldata:
+   redisdata:
