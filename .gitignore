@@ -1,4 +1,5 @@
 config/
 logs/
 sqlbackups/
+app/
 placeholder.txt
